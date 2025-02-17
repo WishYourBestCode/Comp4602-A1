@@ -1,0 +1,53 @@
+@model IEnumerable<Blog.ViewModels.AdminUserViewModel>
+@{
+    ViewData["Title"] = "Admin - Manage Users";
+    var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+}
+
+<h2>Manage Users</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Approved?</th>
+            <th>Current Roles</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td>@user.Email</td>
+            <td>@user.IsApproved</td>
+            <td>@string.Join(", ", user.Roles)</td>
+            <td>
+                 @if (user.Id != currentUserId)
+                {
+                    <form asp-action="Approve" method="post" style="display:inline">
+                        <input type="hidden" name="userId" value="@user.Id" />
+                        <button type="submit" class="btn @(user.IsApproved ? "btn-danger" : "btn-success")">
+                            @(user.IsApproved ? "Unapprove" : "Approve")
+                        </button>
+                    </form>
+
+            
+                    <form asp-action="AssignRole" method="post" style="display:inline">
+                        <input type="hidden" name="userId" value="@user.Id" />
+                        <input type="hidden" name="roleName" value="Contributor" />
+                        <button type="submit" class="btn btn-primary">Make Contributor</button>
+                    </form>
+
+            
+                    <form asp-action="AssignRole" method="post" style="display:inline">
+                        <input type="hidden" name="userId" value="@user.Id" />
+                        <input type="hidden" name="roleName" value="Admin" />
+                        <button type="submit" class="btn btn-warning">Make Admin</button>
+                    </form>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -1,0 +1,46 @@
+﻿@model IEnumerable<Blog.Models.Article>
+
+@{
+    ViewData["Title"] = "Articles List";
+    var isApprovedUser = (bool)ViewBag.IsApprovedUser;
+}
+
+<h2>Articles</h2>
+
+
+@if ((User?.IsInRole("Contributor") ?? false) && isApprovedUser)
+{
+    <a asp-action="Create" class="btn btn-success mb-3">Create New Article</a>
+}
+@foreach (var article in Model)
+{
+    <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; word-wrap: break-word; overflow-wrap: break-word;">
+        <h3>@(article?.Title ?? "No Title")</h3>
+
+        <p>
+            <strong>@(article?.ContributorUsername ?? "Unknown")</strong>, 
+            @(article == null 
+                ? "" 
+                : article.CreateDate.ToString("MMMM dd, yyyy"))
+        </p>
+
+        @{
+            var previewText = article?.Body ?? "";
+            // Truncate preview text to 100 characters if needed
+            if (previewText.Length > 100)
+            {
+                previewText = previewText.Substring(0, 100);
+            }
+        }
+
+        <p style="word-wrap: break-word; overflow-wrap: break-word;">
+            @previewText
+            @* Always show the ...more link if the user is approved *@
+            @if (isApprovedUser)
+            {
+                <a asp-action="Detail" asp-route-id="@article?.ArticleId">... more</a>
+            }
+        </p>
+    </div>
+}
+

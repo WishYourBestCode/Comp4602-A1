@@ -1,0 +1,41 @@
+﻿@model Blog.Models.Article
+
+@{
+    ViewData["Title"] = "Article Details";
+}
+
+<h2>Article Details</h2>
+
+<div class="card">
+    <div class="card-header">
+        <h3>@Model.Title</h3>
+    </div>
+    <div class="card-body">
+        <p>
+            <strong>Contributor:</strong> @Model.ContributorUsername <br />
+            <strong>Date:</strong> @Model.CreateDate.ToString("MMMM dd, yyyy")
+        </p>
+        <hr />
+        <div>
+            @* Display the full article body *@
+            @Html.Raw(Model.Body)
+        </div>
+    </div>
+</div>
+
+<br />
+
+<div class="d-flex">
+    @* Only show Edit and Delete if the current user is the article’s owner *@
+    @if (User.Identity!.IsAuthenticated && User.Identity.Name == Model.ContributorUsername)
+    {
+        <a asp-action="Edit" asp-route-id="@Model.ArticleId" class="btn btn-primary me-2">Edit</a>
+        
+        <form asp-action="Delete" asp-route-id="@Model.ArticleId" method="post" 
+              onsubmit="return confirm('Are you sure you want to delete this article?');">
+            <button type="submit" class="btn btn-danger me-2">Delete</button>
+        </form>
+    }
+
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

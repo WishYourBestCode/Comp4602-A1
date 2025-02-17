@@ -1,0 +1,3 @@
+dotnet 
+dotnet tool install -g dotnet-aspnet-codegenerator
+dotnet aspnet-codegenerator identity --files "Account.Register;Account.Login;Account.RegisterConfirmation" -dc ApplicationDbContext
